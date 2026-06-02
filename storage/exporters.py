@@ -2,10 +2,24 @@ import csv
 import io
 import json
 
-def schedule_to_json(schedule):
+def schedule_to_json(schedule: list) -> str:
+    """
+    Serializes a schedule (list of months with entries) into a JSON string.
+    Args:
+        schedule (list): A list of dictionaries, each representing a month with its entries.
+    Returns:
+        str: A JSON-formatted string representing the schedule.
+    """
     return json.dumps(schedule, indent = 4)
 
-def schedule_to_csv(schedule):
+def schedule_to_csv(schedule: list) -> str:
+    """
+    Serializes a schedule (list of months with entries) into a CSV string.
+    Args:
+        schedule (list): A list of dictionaries, each representing a month with its entries.
+    Returns:
+        str: A CSV-formatted string representing the schedule.
+    """
     output = io.StringIO()
     writer = csv.writer(output)
     writer.writerow([
@@ -25,7 +39,14 @@ def schedule_to_csv(schedule):
             ])
     return output.getvalue()
 
-def schedule_to_markdown(schedule):
+def schedule_to_markdown(schedule: list) -> str:
+    """
+    Serializes a schedule (list of months with entries) into a Markdown string.
+    Args:
+        schedule (list): A list of dictionaries, each representing a month with its entries.
+    Returns:
+        str: A Markdown-formatted string representing the schedule.
+    """
     lines = ["# Audiobook Schedule", ""]
     for month in schedule:
         lines.append(f"## Month {month['month']}")

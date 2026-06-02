@@ -1,7 +1,7 @@
 from planners.strict_planner import StrictPlanner
 from planners.overflow_planner import OverflowPlanner
 
-def generate_schedule(books, mode):
+def generate_schedule(books: list, mode: str) -> list:
     if mode == "Complete-in-Month":
         return StrictPlanner().build(books)
     return OverflowPlanner().build(books)

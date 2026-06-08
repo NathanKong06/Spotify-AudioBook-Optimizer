@@ -54,9 +54,31 @@ uploaded = st.file_uploader("Upload Library JSON", type=["json"])
 if uploaded is not None:
     uploaded_name = uploaded.name
     if st.session_state.get("last_uploaded_file") != uploaded_name:
-        st.session_state.books = load_books(uploaded)
-        st.session_state.schedule = None
-        st.session_state.last_uploaded_file = uploaded_name
+        try:
+            loaded_books = load_books(uploaded)
+            if not isinstance(loaded_books, list):
+                raise ValueError("JSON must contain a list of audiobook records.")
+            for index, book in enumerate(loaded_books, start=1):
+                if not hasattr(book, "title"):
+                    raise ValueError(f"Book #{index} is missing a title.")
+                if not hasattr(book, "minutes"):
+                    raise ValueError(f"Book #{index} is missing a duration.")
+                if not isinstance(book.title, str):
+                    raise ValueError(f"Book #{index} title must be text.")
+                if not book.title.strip():
+                    raise ValueError(f"Book #{index} has an empty title.")
+                if not isinstance(book.minutes, int):
+                    raise ValueError(f"Book #{index} duration must be an integer number of minutes.")
+                if book.minutes <= 0:
+                    raise ValueError(f"Book #{index} duration must be greater than zero.")
+            st.session_state.books = loaded_books
+            st.session_state.schedule = None
+            st.session_state.last_uploaded_file = uploaded_name
+
+            st.success(f"Successfully loaded {len(loaded_books)} audiobook(s).")
+
+        except Exception as exc:
+            st.error(f"Invalid library file: {exc}")
 
 total_minutes = calculate_total_minutes()
 
